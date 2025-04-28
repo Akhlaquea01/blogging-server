@@ -1,41 +1,27 @@
-import { Router } from 'express';
-import { createPost, getPosts } from '../controllers/postController';
+import { Router } from "express";
+import {
+    createPost,
+    getAllPosts,
+    getPostBySlug,
+    updatePostBySlug,
+    deletePostBySlug,
+} from "../controllers/postController";
 
 const router = Router();
 
-/**
- * @swagger
- * /api/posts:
- *   get:
- *     summary: Get all posts
- *     tags: [Posts]
- *     responses:
- *       200:
- *         description: List of posts
- */
-router.get('/', getPosts);
+// Create a new post
+router.post("/", createPost);
 
-/**
- * @swagger
- * /api/posts:
- *   post:
- *     summary: Create a new post
- *     tags: [Posts]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *     responses:
- *       201:
- *         description: Post created
- */
-router.post('/', createPost);
+// Get all posts
+router.get("/", getAllPosts);
 
-export default router; 
+// Get a single post by slug
+router.get("/:slug", getPostBySlug);
+
+// Update a post by slug
+router.put("/:slug", updatePostBySlug);
+
+// Delete a post by slug
+router.delete("/:slug", deletePostBySlug);
+
+export default router;

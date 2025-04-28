@@ -9,6 +9,7 @@ import postRoutes from './routes/postRoutes';
 import adminRoutes from './routes/adminRoutes';
 import uploadRoutes from './routes/uploadRoutes';
 import { errorHandler } from './middlewares/errorHandler';
+import categoryRoutes from "./routes/categoryRoutes";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/posts', postRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // Error Handler
 app.use(errorHandler);
