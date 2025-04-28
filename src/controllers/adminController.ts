@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin';
+import { AuthenticatedRequest } from 'custom';
 
 export const registerAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -66,3 +67,23 @@ export const loginAdmin = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 }; 
+
+export const getAdminProfile = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.admin) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized',
+        data: null
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile retrieved successfully',
+      data: req.admin
+    });
+  } catch (error) {
+    next(error);
+  }
+};
