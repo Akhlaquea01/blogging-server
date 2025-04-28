@@ -38,14 +38,65 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-// Get all posts
-export const getAllPosts = async (_req: Request, res: Response) => {
+// Get all posts with filtering
+// /api/posts?category=tech&tag=javascript&search=react&isPublished=true&sortBy=createdAt&sortOrder=desc&page=1&limit=10
+export const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const posts = await PostModel.find()
-      .populate("category", "name slug") // populate category name and slug
-      .sort({ createdAt: -1 });
+    const {
+      category,
+      tag,
+      search,
+      isPublished,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      page = 1,
+      limit = 10
+    } = req.query;
 
-    res.json(posts);
+    // Build filter query
+    const filter: any = {};
+    
+    if (category) {
+      filter.category = category;
+    }
+    
+    if (tag) {
+      filter.tags = { $in: [tag] };
+    }
+    
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    if (isPublished !== undefined) {
+      filter.isPublished = isPublished === 'true';
+    }
+
+    // Calculate pagination
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // Get total count for pagination
+    const total = await PostModel.countDocuments(filter);
+
+    // Get posts with filters
+    const posts = await PostModel.find(filter)
+      .populate("category", "name slug")
+      .sort({ [sortBy as string]: sortOrder === 'desc' ? -1 : 1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    res.json({
+      posts,
+      pagination: {
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / Number(limit)),
+        limit: Number(limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch posts", details: error });
   }
