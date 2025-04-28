@@ -17,7 +17,7 @@ export const adminAuth = (req: AuthRequest, res: Response, next: NextFunction) =
     req.user = decoded;
 
     // Check if user is admin
-    if (!req.user.isAdmin) {
+    if (!req.user) {
       return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
     }
 
