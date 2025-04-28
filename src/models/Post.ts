@@ -6,6 +6,7 @@ export interface IPost extends Document {
   category: Types.ObjectId; // changed from string to ObjectId
   tags: string[];
   thumbnailUrl?: string;
+  videoUrl?: string;
   highlightDescription: string;
   content: string;
   htmlContent: string;
@@ -23,6 +24,7 @@ const PostSchema = new Schema<IPost>(
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true }, // referencing Category model
     tags: { type: [String], default: [] },
     thumbnailUrl: { type: String },
+    videoUrl: { type: String },
     highlightDescription: { type: String, required: true, trim: true },
     content: { type: String, required: true },
     htmlContent: { type: String, required: true },
